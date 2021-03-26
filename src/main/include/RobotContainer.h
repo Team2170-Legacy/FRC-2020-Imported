@@ -100,7 +100,10 @@ class RobotContainer {
     GatherMoreBalls_L = 7,
     GatherMoreBalls_R = 8,
     GatherMoreBalls_C = 9,
-    StealBalls = 10
+    StealBalls = 10,
+
+    Forward5mRamsete = 11,
+    SlalomPath = 12
   };
   
   void StartDataLogging(void);
@@ -120,7 +123,7 @@ class RobotContainer {
   frc::SendableChooser<Profile> m_trajectoryChooser;
   frc::SendableChooser<double> m_delayChooser;
 
-  frc2::Command* GenerateRamseteCommand();
+  frc2::Command* GenerateRamseteCommand(std::string path);
   void ConfigureButtonBindings();
 
   AutonomousCommand m_autonomousCommand;

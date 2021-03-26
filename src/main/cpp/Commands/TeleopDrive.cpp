@@ -11,9 +11,9 @@
 TeleopDrive::TeleopDrive(DriveTrain* subsystem) : m_driveTrain{subsystem},
     kVoltageDrive{frc::Preferences::GetInstance()->GetBoolean("Voltage Driving", false)}, 
     m_xAxisFilter {frc::LinearFilter<double>::SinglePoleIIR(
-      frc::Preferences::GetInstance()->GetDouble("Speed Time Constant", 0.01), 0.02_s)},
+      frc::Preferences::GetInstance()->GetDouble("Speed Time Constant", 2.0), 0.02_s)},
     m_turnFilter {frc::LinearFilter<double>::SinglePoleIIR(
-      frc::Preferences::GetInstance()->GetDouble("Turn Time Constant", 0.01), 0.02_s)},
+      frc::Preferences::GetInstance()->GetDouble("Turn Time Constant", 1.0), 0.02_s)},
     kMaxXRate {frc::Preferences::GetInstance()->GetDouble("X Max Rate", 0.10)},
     kMaxTurnRate {frc::Preferences::GetInstance()->GetDouble("Turn Max Rate", 0.10)}
 {

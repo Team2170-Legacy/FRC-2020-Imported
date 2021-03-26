@@ -12,10 +12,16 @@
 #include <units/length.h>
 #include <units/acceleration.h>
 #include <units/velocity.h>
+#include <units/voltage.h>
 
 namespace DriveConstants {
   constexpr auto kTrackWidth = 0.6731_m;
 	extern const frc::DifferentialDriveKinematics kDriveKinematics;
+  constexpr auto ks = 0.216_V;
+  constexpr auto kv = 1.8 * 1_V * 1_s / 1_m;
+  constexpr auto ka = 0.4 * 1_V * 1_s * 1_s / 1_m;
+
+  constexpr double kPDriveVel = 0.1;
 }
 
 namespace ShooterContants {

@@ -14,6 +14,12 @@
 #include "Commands/AutoSetShootLow.h"
 #include "Commands/FireShooter.h"
 
+#include <frc/Filesystem.h>
+#include <frc/trajectory/TrajectoryUtil.h>
+#include <wpi/Path.h>
+#include <wpi/SmallString.h>
+
+
 RobotContainer::RobotContainer() :
   kHighShooterSpeed {frc::Preferences::GetInstance()->GetDouble("High Shooter Speed", 20.0)},
   kLowShooterSpeed {frc::Preferences::GetInstance()->GetDouble("Low Shooter Speed", 20.0)},
@@ -27,11 +33,6 @@ RobotContainer::RobotContainer() :
   // Configure the button bindings
   ConfigureButtonBindings();
 
-  // Chooser Setup
-  //  m_chooser.SetDefaultOption("RamSete Command", GenerateRamseteCommand());
-  // m_chooser.AddOption("Matlab Auto Test", new AutonomousCommandGroup(0, &m_driveTrain));
-  // frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
-
   m_trajectoryChooser.SetDefaultOption("A. No Trajectory", NoTrajectory);
   m_trajectoryChooser.AddOption("B. Shoot from Line: Start Left", ShootFromLine_L);
   m_trajectoryChooser.AddOption("C. Shoot from Line: Start Right", ShootFromLine_R);
@@ -43,6 +44,9 @@ RobotContainer::RobotContainer() :
   m_trajectoryChooser.AddOption("J. Gather more balls: Start Right", GatherMoreBalls_R);
   m_trajectoryChooser.AddOption("K. Gather more balls: Start Center", GatherMoreBalls_C);
   m_trajectoryChooser.AddOption("L. Steal Balls and Shoot: Start Front of Enemy Trench", StealBalls);
+  m_trajectoryChooser.AddOption("M. Straight Forward Ramsete Test", Forward5mRamsete);
+  m_trajectoryChooser.AddOption("N. Slalom Path", SlalomPath);
+
   frc::SmartDashboard::PutData("Auto Trajectories", &m_trajectoryChooser);
 
   // set-up delay chooser
@@ -87,37 +91,47 @@ void RobotContainer::ConfigureButtonBindings() {
   // LT and RT control intake on and reverse
 }
 
-frc2::Command* RobotContainer::GenerateRamseteCommand() {
+frc2::Command* RobotContainer::GenerateRamseteCommand(std::string path) {
 
-  // Set up config for trajectory
-  frc::TrajectoryConfig config(AutoConstants::kMaxSpeed,
-                               AutoConstants::kMaxAcceleration);
-  // Add kinematics to ensure max speed is actually obeyed
-  config.SetKinematics(DriveConstants::kDriveKinematics);
+  std::cout << "Generating Ramsete Command" << std::endl;
 
-  // An example trajectory to follow.  All units in meters.
-  auto exampleTrajectory = frc::TrajectoryGenerator::GenerateTrajectory(
-      // Start at the origin facing the +X direction
-      frc::Pose2d(0_m, 0_m, frc::Rotation2d(0_deg)),
-     
-     {frc::Translation2d(1_m, 0_m)},
-      // End 3 meters straight ahead of where we started, facing forward
-      frc::Pose2d(3_m, 0_m, frc::Rotation2d(0_deg)),
-      // Pass the config
-      config);
+  wpi::SmallString<64> deployDirectory;
+  frc::filesystem::GetDeployDirectory(deployDirectory);
+  wpi::sys::path::append(deployDirectory, "paths");
+  wpi::sys::path::append(deployDirectory, path);
 
-     frc::SmartDashboard::PutNumber("Trajectory Time", units::unit_cast<double>(exampleTrajectory.TotalTime()));
-     std::vector<frc::Trajectory::State> t_states = exampleTrajectory.States();
+  frc::Trajectory trajectory = frc::TrajectoryUtil::FromPathweaverJson(deployDirectory);
+
+
+  frc::SmartDashboard::PutNumber("Trajectory Time", units::unit_cast<double>(trajectory.TotalTime()));
+  std::vector<frc::Trajectory::State> t_states = trajectory.States();
+
+  // frc2::RamseteCommand ramseteCommand(
+  //   trajectory, 
+  //   [this] {return m_driveTrain.GetPose();},
+  //   frc::RamseteController(AutoConstants::kRamseteB, AutoConstants::kRamseteZeta),
+  //   DriveConstants::kDriveKinematics,
+  //   [this](auto left, auto right){m_driveTrain.SetWheelVelocity(left, right);},
+  //   {&m_driveTrain});
 
   frc2::RamseteCommand ramseteCommand(
-    exampleTrajectory, 
-    [this] {return m_driveTrain.GetPose();},
-    frc::RamseteController(AutoConstants::kRamseteB, AutoConstants::kRamseteZeta),
-    DriveConstants::kDriveKinematics,
-    [this](auto left, auto right){m_driveTrain.SetWheelVelocity(left, right);},
-    {&m_driveTrain});
+      trajectory, [this]() { return m_driveTrain.GetPose(); },
+      frc::RamseteController(AutoConstants::kRamseteB,
+                             AutoConstants::kRamseteZeta),
+      frc::SimpleMotorFeedforward<units::meters>(
+          DriveConstants::ks, DriveConstants::kv, DriveConstants::ka),
+      DriveConstants::kDriveKinematics,
+      [this] { return m_driveTrain.GetWheelSpeeds(); },
+      frc2::PIDController(DriveConstants::kPDriveVel, 0, 0),
+      frc2::PIDController(DriveConstants::kPDriveVel, 0, 0),
+      [this](auto left, auto right) { m_driveTrain.SetWheelVolts(left.template to<double>(), right.template to<double>()); },
+      {&m_driveTrain});
+
 
   // An example command will be run in autonomous
+  std::cout << "Generated Ramsete Command" << std::endl;
+
+
   return new frc2::SequentialCommandGroup(
     std::move(ramseteCommand),
     frc2::InstantCommand([this]{m_driveTrain.SetWheelVelocity(0.0, 0.0);}, {}));
@@ -225,6 +239,13 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
         AutoSetShootHigh(&m_shooter, &m_feeder),
         AimFireShooter(&m_shooter, &m_vision, &m_loader, &m_driveTrain, &m_feeder)
       };
+     case Forward5mRamsete: {
+       std::cout << "here" << std::endl;
+       return GenerateRamseteCommand("straight4meters.wpilib.json");
+     };
+     case SlalomPath: {
+       return GenerateRamseteCommand("SlalomPath.wpilib.json");
+     };
   }
 
   return nullptr;
