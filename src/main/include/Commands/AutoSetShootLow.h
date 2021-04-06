@@ -19,6 +19,4 @@ class AutoSetShootLow
  public:
   AutoSetShootLow(Shooter* shooter, Feeder* feeder);
 
-private:
-  const double kLowShooterSpeed;
 };

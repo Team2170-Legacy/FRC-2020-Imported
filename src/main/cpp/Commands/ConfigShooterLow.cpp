@@ -10,11 +10,8 @@
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-ConfigShooterLow::ConfigShooterLow(Shooter* mrnoll, Feeder* mrfoss):
-  shooterSpeedLow(frc::Preferences::GetInstance()->GetDouble("Low Shooter Speed", 20.0)) {
+ConfigShooterLow::ConfigShooterLow(Shooter* mrnoll, Feeder* mrfoss) {
   // Add your commands here, e.g.
   // AddCommands(FooCommand(), BarCommand());
-  AddCommands(SetHoodLow(mrnoll), 
-    SetShooterSpeed(mrnoll, shooterSpeedLow), 
-    SpinStorageCCW(mrfoss));  
+  AddCommands(ConfigShooter(mrnoll, Shooter::ShooterConfiguration::LowShooter_2020), SpinStorageCCW(mrfoss));  
 }

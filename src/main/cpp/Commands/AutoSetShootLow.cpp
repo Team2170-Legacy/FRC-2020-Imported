@@ -7,18 +7,15 @@
 
 #include "Commands/AutoSetShootLow.h"
 
-#include "Commands/SetHoodLow.h"
-#include "Commands/SetShooterSpeed.h"
+#include "Commands/ConfigShooter.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
-AutoSetShootLow::AutoSetShootLow(Shooter* shooter, Feeder* feeder) :
-  kLowShooterSpeed {frc::Preferences::GetInstance()->GetDouble("Low Shooter Speed", 20.0)}
+AutoSetShootLow::AutoSetShootLow(Shooter* shooter, Feeder* feeder)
  {
   // Add your commands here, e.g.
   // AddCommands(FooCommand(), BarCommand());
   AddCommands(
-    SetHoodLow(shooter),
-    SetShooterSpeed(shooter, kLowShooterSpeed),
+    ConfigShooter(shooter, Shooter::ShooterConfiguration::LowShooter_2020),
     frc2::InstantCommand([feeder] {feeder->RotateCCW();})
   );
  }

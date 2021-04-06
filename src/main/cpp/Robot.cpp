@@ -39,6 +39,7 @@ void Robot::RobotPeriodic() { frc2::CommandScheduler::GetInstance().Run(); }
  */
 void Robot::DisabledInit(){
 	m_container.EndDataLogging();
+	m_container.ShutdownSubsystems();
 }
 
 void Robot::DisabledPeriodic() {

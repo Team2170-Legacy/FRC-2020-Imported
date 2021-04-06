@@ -6,21 +6,18 @@
 /*----------------------------------------------------------------------------*/
 
 #include "Commands/AutoSetShootHigh.h"
+#include "Commands/ConfigShooter.h"
 #include <frc2/command/ParallelRaceGroup.h>
-#include "Commands/SetHoodHigh.h"
-#include "Commands/SetShooterSpeed.h"
 #include "Commands/SpinStorageCCW.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 
 AutoSetShootHigh::AutoSetShootHigh(Shooter* shooter, Feeder* feeder) :
-  kHighShooterSpeed {frc::Preferences::GetInstance()->GetDouble("High Shooter Speed", 20.0)},
   kFeederSpeed {frc::Preferences::GetInstance()->GetDouble("Auto High Feeder Speed", 8.0)}
  {
   // Add your commands here, e.g.
   // AddCommands(FooCommand(), BarCommand());
   AddCommands(
-    SetHoodHigh(shooter),
-    SetShooterSpeed(shooter, kHighShooterSpeed),
+    ConfigShooter(shooter, Shooter::ShooterConfiguration::HighShooter_2020),
     SpinStorageCCW(feeder, kFeederSpeed).WithInterrupt([feeder]{return true;})
   );
 }

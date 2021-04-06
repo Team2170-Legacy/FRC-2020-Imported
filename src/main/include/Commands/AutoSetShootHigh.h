@@ -23,6 +23,5 @@ class AutoSetShootHigh
   AutoSetShootHigh(Shooter* shooter, Feeder* feeder);
 
 private:
-  const double kHighShooterSpeed;
   const double kFeederSpeed;
 };

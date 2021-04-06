@@ -13,6 +13,8 @@
 #include "Commands/AutoSetShootHigh.h"
 #include "Commands/AutoSetShootLow.h"
 #include "Commands/FireShooter.h"
+#include "Commands/ToggleShooterZoneConfig.h"
+#include "Commands/ManualResetShooter.h"
 
 #include <frc/Filesystem.h>
 #include <frc/trajectory/TrajectoryUtil.h>
@@ -66,13 +68,17 @@ RobotContainer::RobotContainer() :
 
 void RobotContainer::ConfigureButtonBindings() {
   // Configure your button bindings here6
-  frc2::JoystickButton(&m_operator,1).WhenPressed(&m_Agitate); // A
+  //frc2::JoystickButton(&m_operator,1).WhenPressed(&m_Agitate); // A
+  frc2::JoystickButton(&m_operator,1).WhileHeld(ManualResetShooter(&m_shooter)); // A
+  // lowers hood while held
+
   frc2::JoystickButton(&m_operator,2).WhileHeld(new FeederOff(&m_feeder)); // B
 
   frc2::JoystickButton(&m_operator,3).WhileHeld(new SpinStorage(&m_feeder)); // X
   frc2::JoystickButton(&m_operator,4).WhileHeld(new SpinStorageCCW(&m_feeder)); // Y
 
-  frc2::JoystickButton(&m_driver,5).WhileHeld(new RetractWinch(&m_climber)); // LB
+  frc2::JoystickButton(&m_operator, 5).WhenPressed(new ToggleShooterZoneConfig(&m_shooter)); // LB
+  //frc2::JoystickButton(&m_driver,5).WhileHeld(new RetractWinch(&m_climber)); // LB
   frc2::JoystickButton(&m_operator,6).WhileHeld(new ShooterOff(&m_shooter)); // RB
 
   frc2::JoystickButton(&m_operator, 7).WhileHeld(new PullIntakeDown(&m_intake)); // LA
@@ -80,13 +86,15 @@ void RobotContainer::ConfigureButtonBindings() {
 
   frc2::JoystickButton(&m_operator,9).WhileHeld(new ConfigShooterHigh(&m_shooter, &m_feeder)); // LJ
   frc2::JoystickButton(&m_operator,10).WhileHeld(new ConfigShooterLow(&m_shooter, &m_feeder)); // RJ
+  
 
   frc2::JoystickButton(&m_driver, 1).WhileHeld(new VisionDrive(&m_vision, &m_driveTrain)); // A
   frc2::JoystickButton(&m_driver,2).WhileHeld(new LoaderOff(&m_loader)); // B
   frc2::JoystickButton(&m_driver,3).WhileHeld(new LoaderUp(&m_loader)); // X
   frc2::JoystickButton(&m_driver,4).WhileHeld(new LoaderDown(&m_loader)); // Y
 
-  frc2::JoystickButton(&m_operator, 5).WhenPressed(&m_ReleaseInterlock);
+
+ // frc2::JoystickButton(&m_operator, 5).WhenPressed(&m_ReleaseInterlock);
 
   // LT and RT control intake on and reverse
 }
@@ -261,4 +269,9 @@ void RobotContainer::EndDataLogging() {
   m_vision.DisableLogging();
   m_driveTrain.DisableLogging();
   m_shooter.DisableLogging();
+}
+
+void RobotContainer::ShutdownSubsystems() {
+  m_shooter.StopHoodActuator();
+
 }

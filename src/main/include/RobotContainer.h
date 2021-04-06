@@ -88,6 +88,7 @@ class RobotContainer {
   RobotContainer();
 
   frc2::Command* GetAutonomousCommand();
+  
 
   enum Profile 
   { NoTrajectory = 0, 
@@ -108,6 +109,7 @@ class RobotContainer {
   
   void StartDataLogging(void);
   void EndDataLogging(void);
+  void ShutdownSubsystems();
 
  private:
   // The robot's subsystems and commands are defined here...

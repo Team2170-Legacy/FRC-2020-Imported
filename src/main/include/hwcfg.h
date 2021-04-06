@@ -11,7 +11,8 @@ enum CANIDs {
 	kFeederMotorID = 8,
 	kLoaderMotorID = 7,
 	kShooterMotorID2 = 9,
-	kClimberMotorID = 10
+	kClimberMotorID = 10, 
+	kShooterActuatorID = 10 // climber motor was replaced with actuator
 };
 
 enum PCMIDs {
