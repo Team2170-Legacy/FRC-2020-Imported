@@ -52,7 +52,7 @@ private:
 	
 	// mm
 	const double minHoodPosition = 0;
-	const double maxHoodPosition = 127;
+	const double maxHoodPosition = 150;
 
 	const double initialHoodPosition;
 
@@ -94,6 +94,7 @@ Shooter();
 		Zone1, // for at home challenges 2021
 		Zone2,
 		Zone3,
+		Zone4,
 		CustomConfiguration = -1
 	};
 
@@ -101,21 +102,21 @@ Shooter();
 	std::vector<double> hoodPositions = {
 		0, 
 		127, 
-		frc::Preferences::GetInstance()->GetDouble("Zone 1 Hood Height", 50),
-		frc::Preferences::GetInstance()->GetDouble("Zone 2 Hood Height", 80),
-		frc::Preferences::GetInstance()->GetDouble("Zone 3 Hood Height", 80), 
-		frc::Preferences::GetInstance()->GetDouble("Zone 4 Hood Height", 80)
+		frc::Preferences::GetInstance()->GetDouble("Zone 1 Hood Height", 0),
+		frc::Preferences::GetInstance()->GetDouble("Zone 2 Hood Height", 120),
+		frc::Preferences::GetInstance()->GetDouble("Zone 3 Hood Height", 130), 
+		frc::Preferences::GetInstance()->GetDouble("Zone 4 Hood Height", 150)
 		};
 
 
 	// RPMS
 	std::vector<double> flywheelSpeeds = {
 		frc::Preferences::GetInstance()->GetDouble("Low Shooter Speed", DEFAULT_SHOOTER_VELOCITY),
-		frc::Preferences::GetInstance()->GetDouble("High Shooter Speed", DEFAULT_SHOOTER_VELOCITY),
+		frc::Preferences::GetInstance()->GetDouble("High Shooter Speed", 4000),
 		frc::Preferences::GetInstance()->GetDouble("Zone 1 Shooter Speed", DEFAULT_SHOOTER_VELOCITY),
 		frc::Preferences::GetInstance()->GetDouble("Zone 2 Shooter Speed", DEFAULT_SHOOTER_VELOCITY),
-		frc::Preferences::GetInstance()->GetDouble("Zone 3 Shooter Speed", DEFAULT_SHOOTER_VELOCITY),
-		frc::Preferences::GetInstance()->GetDouble("Zone 4 Shooter Speed", DEFAULT_SHOOTER_VELOCITY)
+		frc::Preferences::GetInstance()->GetDouble("Zone 3 Shooter Speed", 4000),
+		frc::Preferences::GetInstance()->GetDouble("Zone 4 Shooter Speed", 4000)
 		};
 
 	ShooterConfiguration configuration;

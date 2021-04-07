@@ -26,6 +26,10 @@ void ToggleShooterZoneConfig::Initialize() {
       break;
     }
     case Shooter::ShooterConfiguration::Zone3: {
+      nextConfiguration = Shooter::ShooterConfiguration::Zone4;
+      break;
+    }
+    case Shooter::ShooterConfiguration::Zone4: {
       nextConfiguration = Shooter::ShooterConfiguration::Zone1;
       break;
     }

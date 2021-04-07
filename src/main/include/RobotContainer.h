@@ -104,7 +104,10 @@ class RobotContainer {
     StealBalls = 10,
 
     Forward5mRamsete = 11,
-    SlalomPath = 12
+    SlalomPath = 12,
+    BarrelRacingPath = 13,
+    BouncePath = 14
+
   };
   
   void StartDataLogging(void);

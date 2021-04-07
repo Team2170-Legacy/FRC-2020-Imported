@@ -254,6 +254,12 @@ frc2::Command* RobotContainer::GetAutonomousCommand() {
      case SlalomPath: {
        return GenerateRamseteCommand("SlalomPath.wpilib.json");
      };
+     case BarrelRacingPath: {
+       return GenerateRamseteCommand("BarrelRacingPath.wpilib.json");
+     };
+     case BouncePath: {
+       return GenerateRamseteCommand("BouncePath.wpilib.json");
+     }
   }
 
   return nullptr;
